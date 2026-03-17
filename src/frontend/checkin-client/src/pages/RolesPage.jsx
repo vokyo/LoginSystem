@@ -51,10 +51,10 @@ function RolesPage() {
     try {
       if (editingRoleId) {
         await updateRole(editingRoleId, form)
-        setMessage('角色更新成功。')
+        setMessage('Role updated successfully.')
       } else {
         await createRole(form)
-        setMessage('角色创建成功。')
+        setMessage('Role created successfully.')
       }
 
       resetForm()
@@ -78,29 +78,29 @@ function RolesPage() {
 
   return (
     <section className="page-section">
-      <PageHeader eyebrow="RBAC" title="角色与权限管理" description="定义角色并配置权限点，后端接口基于权限声明控制访问。" />
+      <PageHeader eyebrow="RBAC" title="Role Management" description="Define roles and assign permission codes for backend authorization." />
       {message && <p className="info-banner">{message}</p>}
 
       <div className="two-column">
         <form className="card grid-form" onSubmit={handleSubmit}>
-          <h3>{editingRoleId ? '编辑角色' : '新增角色'}</h3>
+          <h3>{editingRoleId ? 'Edit Role' : 'Create Role'}</h3>
           <label>
-            角色名
+            Role Name
             <input value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} required />
           </label>
           <label>
-            描述
+            Description
             <textarea value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} rows="4" />
           </label>
           <label>
-            状态
+            Status
             <select value={String(form.isActive)} onChange={(event) => setForm((current) => ({ ...current, isActive: event.target.value === 'true' }))}>
-              <option value="true">启用</option>
-              <option value="false">禁用</option>
+              <option value="true">Active</option>
+              <option value="false">Disabled</option>
             </select>
           </label>
           <label>
-            权限
+            Permissions
             <select
               multiple
               value={form.permissionIds}
@@ -119,25 +119,25 @@ function RolesPage() {
             </select>
           </label>
           <div className="action-row">
-            <button className="primary-button">{editingRoleId ? '保存修改' : '创建角色'}</button>
+            <button className="primary-button">{editingRoleId ? 'Save Changes' : 'Create Role'}</button>
             {editingRoleId && (
               <button type="button" className="secondary-button" onClick={resetForm}>
-                取消编辑
+                Cancel
               </button>
             )}
           </div>
         </form>
 
         <div className="card">
-          <h3>角色列表</h3>
+          <h3>Role List</h3>
           <table className="data-table">
             <thead>
               <tr>
-                <th>角色</th>
-                <th>描述</th>
-                <th>状态</th>
-                <th>权限</th>
-                <th>操作</th>
+                <th>Role</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Permissions</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -145,15 +145,15 @@ function RolesPage() {
                 <tr key={role.id}>
                   <td>{role.name}</td>
                   <td>{role.description || '-'}</td>
-                  <td>{role.isActive ? '启用' : '禁用'}</td>
+                  <td>{role.isActive ? 'Active' : 'Disabled'}</td>
                   <td>{role.permissions.map((permission) => permission.code).join(', ') || '-'}</td>
                   <td className="action-row">
                     <button type="button" className="secondary-button" onClick={() => startEdit(role)}>
-                      编辑
+                      Edit
                     </button>
                     {!role.isSystem && (
                       <button type="button" className="danger-button" onClick={() => handleDelete(role.id)}>
-                        删除
+                        Delete
                       </button>
                     )}
                   </td>

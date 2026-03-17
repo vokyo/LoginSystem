@@ -68,10 +68,10 @@ function UsersPage() {
         })
         await assignUserRoles(editingUserId, form.roleIds)
         await updateUserStatus(editingUserId, form.isActive)
-        setMessage('用户更新成功。')
+        setMessage('User updated successfully.')
       } else {
         await createUser(form)
-        setMessage('用户创建成功。')
+        setMessage('User created successfully.')
       }
 
       resetForm()
@@ -113,14 +113,14 @@ function UsersPage() {
 
   return (
     <section className="page-section">
-      <PageHeader eyebrow="Admin" title="用户管理" description="管理后台用户、启用状态、基本信息和角色关联。" />
+      <PageHeader eyebrow="Admin" title="User Management" description="Manage users, profile data, active state, and role assignment." />
       {message && <p className="info-banner">{message}</p>}
 
       <div className="two-column">
         <form className="card grid-form" onSubmit={handleSubmit}>
-          <h3>{editingUserId ? '编辑用户' : '新增用户'}</h3>
+          <h3>{editingUserId ? 'Edit User' : 'Create User'}</h3>
           <label>
-            用户名
+            Username
             <input
               value={form.userName}
               disabled={Boolean(editingUserId)}
@@ -129,15 +129,15 @@ function UsersPage() {
             />
           </label>
           <label>
-            姓名
+            Full Name
             <input value={form.fullName} onChange={(event) => setForm((current) => ({ ...current, fullName: event.target.value }))} required />
           </label>
           <label>
-            邮箱
+            Email
             <input type="email" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} required />
           </label>
           <label>
-            {editingUserId ? '新密码（留空则不修改）' : '密码'}
+            {editingUserId ? 'New Password (optional)' : 'Password'}
             <input
               type="password"
               minLength="6"
@@ -147,7 +147,7 @@ function UsersPage() {
             />
           </label>
           <label>
-            角色
+            Roles
             <select
               multiple
               value={form.roleIds}
@@ -166,36 +166,36 @@ function UsersPage() {
             </select>
           </label>
           <label>
-            启用状态
+            Status
             <select value={String(form.isActive)} onChange={(event) => setForm((current) => ({ ...current, isActive: event.target.value === 'true' }))}>
-              <option value="true">启用</option>
-              <option value="false">禁用</option>
+              <option value="true">Active</option>
+              <option value="false">Disabled</option>
             </select>
           </label>
           <div className="action-row">
-            <button className="primary-button">{editingUserId ? '保存修改' : '创建用户'}</button>
+            <button className="primary-button">{editingUserId ? 'Save Changes' : 'Create User'}</button>
             {editingUserId && (
               <button type="button" className="secondary-button" onClick={resetForm}>
-                取消编辑
+                Cancel
               </button>
             )}
           </div>
         </form>
 
         <div className="card">
-          <h3>用户列表</h3>
+          <h3>User List</h3>
           {loading ? (
-            <p>加载中...</p>
+            <p>Loading...</p>
           ) : (
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>用户名</th>
-                  <th>姓名</th>
-                  <th>邮箱</th>
-                  <th>角色</th>
-                  <th>状态</th>
-                  <th>操作</th>
+                  <th>Username</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Roles</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -221,18 +221,18 @@ function UsersPage() {
                     </td>
                     <td>
                       <span className={user.isActive ? 'pill success' : 'pill muted'}>
-                        {user.isActive ? '启用' : '禁用'}
+                        {user.isActive ? 'Active' : 'Disabled'}
                       </span>
                     </td>
                     <td className="action-row">
                       <button type="button" className="secondary-button" onClick={() => startEdit(user)}>
-                        编辑
+                        Edit
                       </button>
                       <button type="button" className="secondary-button" onClick={() => handleToggle(user)}>
-                        {user.isActive ? '禁用' : '启用'}
+                        {user.isActive ? 'Disable' : 'Enable'}
                       </button>
                       <button type="button" className="danger-button" onClick={() => handleDelete(user.id)}>
-                        删除
+                        Delete
                       </button>
                     </td>
                   </tr>

@@ -35,14 +35,14 @@ function CheckInRecordsPage() {
 
   return (
     <section className="page-section">
-      <PageHeader eyebrow="Audit" title="签到记录" description="按用户和状态筛选签到结果，便于管理端审计。" />
+      <PageHeader eyebrow="Audit" title="Check-in Records" description="Filter check-in results by user, status, and time range." />
       {message && <p className="info-banner">{message}</p>}
 
       <form className="card filter-bar" onSubmit={handleSearch}>
         <label>
-          用户
+          User
           <select value={filters.userId} onChange={(event) => setFilters((current) => ({ ...current, userId: event.target.value }))}>
-            <option value="">全部</option>
+            <option value="">All</option>
             {usersResult.items.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.userName}
@@ -51,34 +51,34 @@ function CheckInRecordsPage() {
           </select>
         </label>
         <label>
-          状态
+          Status
           <select value={filters.status} onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))}>
-            <option value="">全部</option>
+            <option value="">All</option>
             <option value="Success">Success</option>
             <option value="Failed">Failed</option>
           </select>
         </label>
         <label>
-          开始时间
+          Start Time
           <input type="datetime-local" value={filters.startUtc} onChange={(event) => setFilters((current) => ({ ...current, startUtc: event.target.value }))} />
         </label>
         <label>
-          结束时间
+          End Time
           <input type="datetime-local" value={filters.endUtc} onChange={(event) => setFilters((current) => ({ ...current, endUtc: event.target.value }))} />
         </label>
-        <button className="primary-button">筛选</button>
+        <button className="primary-button">Apply Filters</button>
       </form>
 
       <div className="card">
-        <h3>记录列表</h3>
+        <h3>Record List</h3>
         <table className="data-table">
           <thead>
             <tr>
-              <th>用户</th>
-              <th>状态</th>
-              <th>失败原因</th>
-              <th>时间</th>
-              <th>来源 IP</th>
+              <th>User</th>
+              <th>Status</th>
+              <th>Failure Reason</th>
+              <th>Time</th>
+              <th>Source IP</th>
             </tr>
           </thead>
           <tbody>

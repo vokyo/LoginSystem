@@ -136,6 +136,8 @@ Independent portal default URL:
 
 - `http://localhost:5174`
 
+By default both Vite dev servers proxy `/api` to `http://localhost:5246`.
+
 Optional API base URL override:
 
 ```powershell
@@ -264,11 +266,14 @@ Docker endpoints:
 - Admin frontend: `http://localhost:5173`
 - Check-in portal: `http://localhost:5174`
 - Backend Swagger: `http://localhost:5246/swagger`
+- Backend health: `http://localhost:5246/health`
 - SQL Server: `localhost,1433`
 
 Docker notes:
 
+- Docker Desktop must have WSL 2 and virtualization available.
 - Frontend container uses `nginx` and proxies `/api` to the backend container.
 - Portal container also uses `nginx` and exposes a standalone check-in website.
 - Backend startup includes retry logic for initial database migration/seed.
+- Compose uses health checks so frontend services wait for the backend, and the backend waits for SQL Server readiness.
 - SQL Server default SA password in compose is `YourStrong!Passw0rd`.

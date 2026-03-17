@@ -2,11 +2,11 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 const navItems = [
-  { to: '/users', label: '用户管理', permission: 'users.read' },
-  { to: '/roles', label: '角色管理', permission: 'roles.read' },
-  { to: '/tokens', label: 'Token 管理', permission: 'tokens.read' },
-  { to: '/checkin-records', label: '签到记录', permission: 'checkins.read' },
-  { to: '/checkin', label: '签到页' },
+  { to: '/users', label: 'User Management', permission: 'users.read' },
+  { to: '/roles', label: 'Role Management', permission: 'roles.read' },
+  { to: '/tokens', label: 'Token Management', permission: 'tokens.read' },
+  { to: '/checkin-records', label: 'Check-in Records', permission: 'checkins.read' },
+  { to: '/checkin', label: 'Check-in Page' },
 ]
 
 function AppShell() {
@@ -18,7 +18,7 @@ function AppShell() {
         <div>
           <p className="eyebrow">CheckIn System</p>
           <h1>Admin Console</h1>
-          <p className="sidebar-copy">统一管理用户、角色、权限、Token 与签到数据。</p>
+          <p className="sidebar-copy">Manage users, roles, permissions, tokens, and check-in audit data from one place.</p>
         </div>
 
         <nav className="nav-list">
@@ -35,7 +35,7 @@ function AppShell() {
             <p>{auth?.user?.userName}</p>
           </div>
           <button className="secondary-button" onClick={logout}>
-            退出登录
+            Sign Out
           </button>
         </div>
       </aside>

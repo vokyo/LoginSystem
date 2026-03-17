@@ -32,13 +32,13 @@ function LoginPage() {
       <div className="auth-card">
         <PageHeader
           eyebrow="Admin Management System"
-          title="登录管理后台"
-          description="默认种子账号为 admin / Admin123!。首次启动后可直接登录。"
+          title="Sign In"
+          description="Default seed account: admin / Admin123!."
         />
 
         <form className="grid-form" onSubmit={handleSubmit}>
           <label>
-            用户名
+            Username
             <input
               value={form.userName}
               onChange={(event) => setForm((current) => ({ ...current, userName: event.target.value }))}
@@ -47,7 +47,7 @@ function LoginPage() {
           </label>
 
           <label>
-            密码
+            Password
             <input
               type="password"
               value={form.password}
@@ -59,7 +59,7 @@ function LoginPage() {
           {error && <p className="error-text">{error}</p>}
 
           <button className="primary-button" disabled={loading}>
-            {loading ? '登录中...' : '登录'}
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
       </div>

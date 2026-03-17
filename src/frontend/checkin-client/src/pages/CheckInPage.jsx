@@ -29,7 +29,11 @@ function CheckInPage() {
   return (
     <section className="checkin-page">
       <div className="checkin-card">
-        <PageHeader eyebrow="Check-in Website" title="签到验证" description="提交用户 Token，系统会验证签名、过期时间、撤销状态和用户有效性。" />
+        <PageHeader
+          eyebrow="Check-in Website"
+          title="Check-in Validation"
+          description="Validate token signature, expiry, revocation state, and linked user activity."
+        />
 
         <form className="grid-form" onSubmit={handleSubmit}>
           <label>
@@ -37,19 +41,19 @@ function CheckInPage() {
             <textarea value={token} onChange={(event) => setToken(event.target.value)} rows="8" required />
           </label>
           <button type="button" className="secondary-button" onClick={() => setToken(localStorage.getItem('latest-checkin-token') || '')}>
-            使用最近生成的 Token
+            Use Latest Generated Token
           </button>
           <button className="primary-button" disabled={loading}>
-            {loading ? '验证中...' : '提交签到'}
+            {loading ? 'Validating...' : 'Submit Check-in'}
           </button>
         </form>
 
         {result && (
           <div className={result.isSuccessful ? 'result-card success' : 'result-card failed'}>
-            <h3>{result.isSuccessful ? '签到成功' : '签到失败'}</h3>
+            <h3>{result.isSuccessful ? 'Check-in Succeeded' : 'Check-in Failed'}</h3>
             <p>{result.message}</p>
-            {result.failureReason && <p>失败原因: {result.failureReason}</p>}
-            <p>记录时间: {new Date(result.checkedInAtUtc).toLocaleString()}</p>
+            {result.failureReason && <p>Reason: {result.failureReason}</p>}
+            <p>Recorded At: {new Date(result.checkedInAtUtc).toLocaleString()}</p>
           </div>
         )}
       </div>

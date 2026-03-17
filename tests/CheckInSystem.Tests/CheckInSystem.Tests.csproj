@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CheckInSystem.Api\CheckInSystem.Api.csproj" />
     <ProjectReference Include="..\..\src\backend\CheckInSystem.Infrastructure\CheckInSystem.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\backend\CheckInSystem.Application\CheckInSystem.Application.csproj" />
     <ProjectReference Include="..\..\src\backend\CheckInSystem.Domain\CheckInSystem.Domain.csproj" />

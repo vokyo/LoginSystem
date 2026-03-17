@@ -220,10 +220,15 @@ dotnet test CheckInSystem.sln
 
 Current test coverage includes:
 
+- `AuthService` login success and rejection paths
+- `JwtTokenService` token generation, validation, and identifier parsing
+- `UserService` paging, create, update, status change, role assignment, and delete flows
+- `RoleService` create, update, delete, permission lookup, and validation flows
 - `TokenService.GenerateAsync`
 - `TokenService.RevokeCurrentAsync`
 - `CheckInService.CheckInAsync` failure path
 - `CheckInService.CheckInAsync` success path
+- `ExceptionHandlingMiddleware` mapped responses for validation, auth, not found, business, and unexpected exceptions
 
 ## Local Helper Scripts
 

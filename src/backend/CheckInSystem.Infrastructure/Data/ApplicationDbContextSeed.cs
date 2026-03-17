@@ -8,7 +8,19 @@ public static class ApplicationDbContextSeed
 {
     public static async Task SeedAsync(ApplicationDbContext context)
     {
-        await context.Database.MigrateAsync();
+        const int maxRetries = 10;
+        for (var attempt = 1; attempt <= maxRetries; attempt++)
+        {
+            try
+            {
+                await context.Database.MigrateAsync();
+                break;
+            }
+            catch when (attempt < maxRetries)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(attempt * 2));
+            }
+        }
 
         if (!await context.Permissions.AnyAsync())
         {

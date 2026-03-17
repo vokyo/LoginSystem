@@ -194,3 +194,41 @@ Frontend currently includes:
 - token generation and history
 - check-in page with latest token reuse
 - check-in record filtering by user, status, time range
+
+## Automated Tests
+
+Commands:
+
+```powershell
+dotnet test CheckInSystem.sln
+```
+
+Current test coverage includes:
+
+- `TokenService.GenerateAsync`
+- `CheckInService.CheckInAsync` failure path
+- `CheckInService.CheckInAsync` success path
+
+## Docker Run
+
+Requirements:
+
+- Docker Desktop
+
+Commands:
+
+```powershell
+docker compose up --build
+```
+
+Docker endpoints:
+
+- Frontend: `http://localhost:5173`
+- Backend Swagger: `http://localhost:5246/swagger`
+- SQL Server: `localhost,1433`
+
+Docker notes:
+
+- Frontend container uses `nginx` and proxies `/api` to the backend container.
+- Backend startup includes retry logic for initial database migration/seed.
+- SQL Server default SA password in compose is `YourStrong!Passw0rd`.

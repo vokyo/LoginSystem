@@ -1,0 +1,48 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: checkinsystem-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: src/backend/CheckInSystem.Api/Dockerfile
+    container_name: checkinsystem-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=CheckInSystemDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=True
+      Jwt__Issuer: CheckInSystem
+      Jwt__Audience: CheckInSystem.Client
+      Jwt__SecretKey: THIS_IS_A_DEMO_SECRET_KEY_CHANGE_IT_IN_PRODUCTION_2026
+      Jwt__AdminTokenExpiryMinutes: 120
+      Jwt__CheckInTokenExpiryHours: 24
+    depends_on:
+      - sqlserver
+    ports:
+      - "5246:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: src/frontend/checkin-client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    container_name: checkinsystem-web
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:

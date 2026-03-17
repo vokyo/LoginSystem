@@ -132,6 +132,10 @@ Frontend default URL:
 
 - `http://localhost:5173`
 
+Independent portal default URL:
+
+- `http://localhost:5174`
+
 Optional API base URL override:
 
 ```powershell
@@ -191,9 +195,18 @@ Frontend currently includes:
 - login
 - user create/edit/delete, enable/disable, role assignment
 - role create/edit/delete
-- token generation and history
-- check-in page with latest token reuse
+- token generation, manual revoke and history
+- admin-side check-in page with latest token reuse
 - check-in record filtering by user, status, time range
+- independent check-in portal project
+
+Portal run:
+
+```powershell
+cd src\frontend\checkin-portal
+npm install
+npm run dev
+```
 
 ## Automated Tests
 
@@ -206,8 +219,33 @@ dotnet test CheckInSystem.sln
 Current test coverage includes:
 
 - `TokenService.GenerateAsync`
+- `TokenService.RevokeCurrentAsync`
 - `CheckInService.CheckInAsync` failure path
 - `CheckInService.CheckInAsync` success path
+
+## Local Helper Scripts
+
+Available scripts:
+
+- `scripts/start-backend.ps1`
+- `scripts/stop-backend.ps1`
+- `scripts/stop-frontend.ps1`
+- `scripts/start-portal.ps1`
+- `scripts/stop-portal.ps1`
+- `scripts/stop-all.ps1`
+
+## GitHub CI
+
+Workflow file:
+
+- `.github/workflows/ci.yml`
+
+Current CI runs:
+
+- backend restore and tests
+- admin frontend build
+- portal frontend build
+- `docker compose config`
 
 ## Docker Run
 
@@ -223,12 +261,14 @@ docker compose up --build
 
 Docker endpoints:
 
-- Frontend: `http://localhost:5173`
+- Admin frontend: `http://localhost:5173`
+- Check-in portal: `http://localhost:5174`
 - Backend Swagger: `http://localhost:5246/swagger`
 - SQL Server: `localhost,1433`
 
 Docker notes:
 
 - Frontend container uses `nginx` and proxies `/api` to the backend container.
+- Portal container also uses `nginx` and exposes a standalone check-in website.
 - Backend startup includes retry logic for initial database migration/seed.
 - SQL Server default SA password in compose is `YourStrong!Passw0rd`.

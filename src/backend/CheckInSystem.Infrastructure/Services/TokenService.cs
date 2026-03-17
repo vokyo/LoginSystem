@@ -67,4 +67,26 @@ public sealed class TokenService(
         var tokens = await userTokenRepository.GetByUserIdAsync(userId, cancellationToken);
         return tokens.Select(x => x.ToDto()).ToArray();
     }
+
+    public async Task<UserTokenDto> RevokeCurrentAsync(Guid userId, string revokedBy, CancellationToken cancellationToken = default)
+    {
+        _ = await userRepository.GetByIdAsync(userId, cancellationToken) ?? throw new KeyNotFoundException("User not found.");
+
+        var token = await userTokenRepository.GetCurrentByUserIdAsync(userId, cancellationToken)
+                    ?? throw new KeyNotFoundException("Current token not found.");
+
+        if (token.RevokedAtUtc.HasValue || !token.IsCurrent)
+        {
+            throw new BusinessException("Current token is already inactive.");
+        }
+
+        token.IsCurrent = false;
+        token.RevokedAtUtc = DateTime.UtcNow;
+        token.RevokedReason = $"Revoked by {revokedBy}";
+        userTokenRepository.Update(token);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Revoked current token {TokenId} for user {UserId}.", token.TokenId, userId);
+        return token.ToDto();
+    }
 }

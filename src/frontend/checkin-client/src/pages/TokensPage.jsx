@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getUsers } from '../api/usersApi'
-import { generateToken, getCurrentToken, getTokenHistory } from '../api/tokensApi'
+import { generateToken, getCurrentToken, getTokenHistory, revokeCurrentToken } from '../api/tokensApi'
 import PageHeader from '../components/PageHeader'
 
 function TokensPage() {
@@ -42,7 +42,18 @@ function TokensPage() {
       const data = await generateToken(selectedUserId, Number(validHours))
       setGeneratedToken(data.token)
       localStorage.setItem('latest-checkin-token', data.token)
-      setMessage('Token 生成成功，旧 Token 已自动失效。')
+      setMessage('Token generated successfully. Previous token was revoked automatically.')
+      await loadTokenData(selectedUserId)
+    } catch (error) {
+      setMessage(error.message)
+    }
+  }
+
+  async function handleRevokeCurrent() {
+    try {
+      await revokeCurrentToken(selectedUserId)
+      setGeneratedToken('')
+      setMessage('Current token revoked successfully.')
       await loadTokenData(selectedUserId)
     } catch (error) {
       setMessage(error.message)
@@ -51,12 +62,17 @@ function TokensPage() {
 
   return (
     <section className="page-section">
-      <PageHeader eyebrow="JWT" title="Token 管理" description="每个用户始终只保留一个当前有效 Token，重新生成会自动撤销旧 Token。" />
+      <PageHeader
+        eyebrow="JWT"
+        title="Token Management"
+        description="Each user keeps at most one active check-in token. You can regenerate or revoke it manually."
+      />
+
       {message && <p className="info-banner">{message}</p>}
 
       <div className="card token-toolbar">
         <label>
-          选择用户
+          Select User
           <select value={selectedUserId} onChange={(event) => setSelectedUserId(event.target.value)}>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
@@ -65,42 +81,58 @@ function TokensPage() {
             ))}
           </select>
         </label>
+
         <label>
-          有效小时数
+          Valid Hours
           <input type="number" min="1" max="720" value={validHours} onChange={(event) => setValidHours(event.target.value)} />
         </label>
-        <button className="primary-button" onClick={handleGenerate} disabled={!selectedUserId}>
-          生成新 Token
+
+        <button type="button" className="primary-button" onClick={handleGenerate} disabled={!selectedUserId}>
+          Generate New Token
+        </button>
+
+        <button
+          type="button"
+          className="danger-button"
+          onClick={handleRevokeCurrent}
+          disabled={!selectedUserId || !currentToken || currentToken.status !== 'Valid'}
+        >
+          Revoke Current Token
         </button>
       </div>
 
       {generatedToken && (
         <div className="card">
-          <h3>最新生成的原始 Token</h3>
+          <h3>Latest Raw Token</h3>
           <textarea className="token-output" value={generatedToken} readOnly rows="6" />
         </div>
       )}
 
-      {currentToken && (
+      {currentToken ? (
         <div className="card">
-          <h3>当前有效 Token</h3>
+          <h3>Current Token</h3>
           <p>TokenId: {currentToken.tokenId}</p>
-          <p>签发时间: {new Date(currentToken.issuedAtUtc).toLocaleString()}</p>
-          <p>过期时间: {new Date(currentToken.expiresAtUtc).toLocaleString()}</p>
-          <p>状态: {currentToken.status}</p>
+          <p>Issued At: {new Date(currentToken.issuedAtUtc).toLocaleString()}</p>
+          <p>Expires At: {new Date(currentToken.expiresAtUtc).toLocaleString()}</p>
+          <p>Status: {currentToken.status}</p>
+        </div>
+      ) : (
+        <div className="card">
+          <h3>Current Token</h3>
+          <p>No active token.</p>
         </div>
       )}
 
       <div className="card">
-        <h3>Token 历史</h3>
+        <h3>Token History</h3>
         <table className="data-table">
           <thead>
             <tr>
               <th>TokenId</th>
-              <th>签发时间</th>
-              <th>过期时间</th>
-              <th>状态</th>
-              <th>撤销原因</th>
+              <th>Issued At</th>
+              <th>Expires At</th>
+              <th>Status</th>
+              <th>Revoked Reason</th>
             </tr>
           </thead>
           <tbody>

@@ -10,3 +10,8 @@ if (Test-Path $pidFile) {
 
     Remove-Item $pidFile -Force
 }
+
+$connection = Get-NetTCPConnection -LocalPort 5246 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($connection) {
+    Stop-Process -Id $connection.OwningProcess -Force
+}

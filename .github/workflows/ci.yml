@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Restore backend
+        run: dotnet restore CheckInSystem.sln
+
+      - name: Test backend
+        run: dotnet test CheckInSystem.sln --no-restore
+
+      - name: Install admin frontend
+        working-directory: src/frontend/checkin-client
+        run: npm ci
+
+      - name: Build admin frontend
+        working-directory: src/frontend/checkin-client
+        run: npm run build
+
+      - name: Install portal frontend
+        working-directory: src/frontend/checkin-portal
+        run: npm install
+
+      - name: Build portal frontend
+        working-directory: src/frontend/checkin-portal
+        run: npm run build
+
+      - name: Validate docker compose
+        run: docker compose config

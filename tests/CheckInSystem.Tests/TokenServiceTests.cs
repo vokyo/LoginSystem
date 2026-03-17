@@ -80,4 +80,57 @@ public sealed class TokenServiceTests
         userTokenRepository.Verify(x => x.Update(previousToken), Times.Once);
         unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task RevokeCurrentAsync_ShouldMarkCurrentTokenAsRevoked()
+    {
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "alice",
+            FullName = "Alice",
+            Email = "alice@example.com",
+            IsActive = true
+        };
+
+        var currentToken = new UserToken
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            User = user,
+            TokenId = "active-token",
+            IssuedAtUtc = DateTime.UtcNow.AddHours(-1),
+            ExpiresAtUtc = DateTime.UtcNow.AddHours(8),
+            IsCurrent = true
+        };
+
+        var userRepository = new Mock<IUserRepository>();
+        userRepository.Setup(x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+
+        var userTokenRepository = new Mock<IUserTokenRepository>();
+        userTokenRepository.Setup(x => x.GetCurrentByUserIdAsync(user.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(currentToken);
+
+        var unitOfWork = new Mock<IUnitOfWork>();
+        unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+
+        var jwtTokenService = new Mock<IJwtTokenService>();
+
+        var service = new TokenService(
+            userRepository.Object,
+            userTokenRepository.Object,
+            unitOfWork.Object,
+            jwtTokenService.Object,
+            NullLogger<TokenService>.Instance);
+
+        var result = await service.RevokeCurrentAsync(user.Id, "admin");
+
+        Assert.False(currentToken.IsCurrent);
+        Assert.NotNull(currentToken.RevokedAtUtc);
+        Assert.Equal("Revoked by admin", currentToken.RevokedReason);
+        Assert.Equal("Revoked", result.Status);
+        userTokenRepository.Verify(x => x.Update(currentToken), Times.Once);
+    }
 }

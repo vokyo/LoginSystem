@@ -40,6 +40,7 @@ public interface ITokenService
     Task<TokenGenerationResultDto> GenerateAsync(Guid userId, GenerateUserTokenRequestDto request, string generatedBy, CancellationToken cancellationToken = default);
     Task<UserTokenDto?> GetCurrentAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<IReadOnlyCollection<UserTokenDto>> GetByUserAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<UserTokenDto> RevokeCurrentAsync(Guid userId, string revokedBy, CancellationToken cancellationToken = default);
 }
 
 public interface ICheckInService

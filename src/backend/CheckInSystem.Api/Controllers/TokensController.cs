@@ -37,4 +37,13 @@ public sealed class TokensController(ITokenService tokenService) : ControllerBas
         var response = await tokenService.GetByUserAsync(userId, cancellationToken);
         return Ok(ApiResponse.Success(response, "Token history fetched successfully."));
     }
+
+    [HttpPost("users/{userId:guid}/revoke-current")]
+    [Authorize(Policy = PermissionPolicies.TokensWrite)]
+    public async Task<IActionResult> RevokeCurrent(Guid userId, CancellationToken cancellationToken)
+    {
+        var revokedBy = User.FindFirstValue(ClaimTypes.Name) ?? User.Identity?.Name ?? "system";
+        var response = await tokenService.RevokeCurrentAsync(userId, revokedBy, cancellationToken);
+        return Ok(ApiResponse.Success(response, "Current token revoked successfully."));
+    }
 }

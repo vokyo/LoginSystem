@@ -1,0 +1,30 @@
+# IDE
+.idea/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build output
+bin/
+obj/
+dist/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+runlogs/
+*.log
+
+# Environment
+.env
+.env.*
+
+# OS
+Thumbs.db
+Desktop.ini
